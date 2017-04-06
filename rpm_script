@@ -8,57 +8,35 @@ config_file=/etc/macfanctl.conf			#Variable for the Config-File
 old_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2) #Variable for "old" RPM
 old_rpm2=$old_rpm					      #Workaround for "old" RPM Variable
 
-#function getcurrentrpm ()
-#	{
-#	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);
-#	current_rpm2=$current_rpm
-#	}
-#
 	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);	#Display current RPM
 	current_rpm2=$current_rpm
-	#getcurrentrpm;
 	echo  "Current Exhaustfan RPM $current_rpm";
 
 case $1 in
 	low)
-	#getcurrentrpm
 	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);
-	current_rpm2=$current_rpm
-#	sed -i 's/"fan_min: $current_rpm2"/"fan_min: $low_rpm"/g' $config_file  #OG-Line
-											
+	current_rpm2=$current_rpm							
 	sed -i "s@$current_rpm2@$low_rpm@" $config_file  #"s@$VARIABLE@$Variable@" file
-
-#	sed -i 's/fan_min: 4500/fan_min: 2000/g' $config_file
 	echo "Setting Exhaustfan RPM to $low_rpm";
-											
-	
-	#getcurrentrpm;
+
 	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);
 	current_rpm2=$current_rpm
 	echo "New Exhaustfan RPM is $current_rpm";
 	fan_pid=$(ps ax | grep macfanctld | cut -d"?" -f 1 | head -1);
 	sudo kill -SIGHUP $fan_pid;
- 
-
-	#kill -1 PID
-	;;
-	
+ 	;;
 	
 	high)
-	#getcurrentrpm
 	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);
 	current_rpm2=$current_rpm
-	#sed -i 's/fan_min: $current_rpm2"/fan_min: $high_rpm/g' $config_file    #OG-Line
-											
 	sed -i "s@$current_rpm2@$high_rpm@" $config_file  #"s@$VARIABLE@$Variable@" file
 
 	echo "Setting Exhaustfan RPM to $high_rpm";
 	
-	#getcurrentrpm;
 	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);
 	current_rpm2=$current_rpm
 	echo "New Exhaustfan RPM is $current_rpm";
-	#kill -1 PID 
+	
 	fan_pid=$(ps ax | grep macfanctld | cut -d"?" -f 1 | head -1);
 	sudo kill -SIGHUP $fan_pid;
 	;;

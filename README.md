@@ -5,8 +5,7 @@ Second things after: My little script only reads and writes into the config file
 while not trying to blow up the fan.
 ###Step 1###
 Install MacFanCtlD
-chmod +x rpm_script.rev0.[hopefully the latest version  l]
-./rpmscript.rev0.4 [argument] (like low / mid / high)
+./rpm_script [argument] ( low / mid / high)
 ###THATS IT###
 The script will write the new rpm into the config file and restart the process to read the new rpm.
 thats why i consider this script to be written badly: shooting with a bazooka to kill a bird.

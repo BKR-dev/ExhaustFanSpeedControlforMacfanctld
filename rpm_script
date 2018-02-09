@@ -1,44 +1,45 @@
 #!/bin/bash
-
-low_rpm=1500       #Variable for Low RPM Exhaust Fan
-high_rpm=5500	   #Variable for High RPM Exhaust Fan
-
-config_file=/etc/macfanctl.conf			#Variable for the Config-File
-
-old_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2) #Variable for "old" RPM
-old_rpm2=$old_rpm					      #Workaround for "old" RPM Variable
-
+	input=6500					#Variable for Max. Input Value for RPM
+	low_rpm=1500					#Variable for Low RPM Exhaust Fan
+	mid_rpm=3000 					 #Variable for Mid RPM Exhaust Fan
+	high_rpm=5500	   				#Variable for High RPM Exhaust Fan
+	config_file=/etc/macfanctl.conf			#Variable for the Config-File
 	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);	#Display current RPM
-	current_rpm2=$current_rpm
-	echo  "Current Exhaustfan RPM $current_rpm";
-
+	echo  "Current Exhaustfan RPM $current_rpm"; 
 case $1 in
 	low)
 	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);
-	current_rpm2=$current_rpm							
-	sed -i "s@$current_rpm2@$low_rpm@" $config_file  #"s@$VARIABLE@$Variable@" file
+	sed -i "s@$current_rpm@$low_rpm@" $config_file  #"s@$VARIABLE@$Variable@" file
 	echo "Setting Exhaustfan RPM to $low_rpm";
-
 	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);
-	current_rpm2=$current_rpm
 	echo "New Exhaustfan RPM is $current_rpm";
 	fan_pid=$(ps ax | grep macfanctld | cut -d"?" -f 1 | head -1);
-	sudo kill -SIGHUP $fan_pid;
- 	;;
-	
+	sudo kill -SIGHUP $fan_pid;;
+ 	mid)
+	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);
+	sed -i "s@$current_rpm@$mid_rpm@" $config_file  #"s@$VARIABLE@$Variable@" file
+	echo "Setting Exhaustfan RPM to $mid_rpm";
+	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);
+	echo "New Exhaustfan RPM is $current_rpm";
+	fan_pid=$(ps ax | grep macfanctld | cut -d"?" -f 1 | head -1);
+	sudo kill -SIGHUP $fan_pid;;
 	high)
 	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);
-	current_rpm2=$current_rpm
-	sed -i "s@$current_rpm2@$high_rpm@" $config_file  #"s@$VARIABLE@$Variable@" file
-
+	sed -i "s@$current_rpm@$high_rpm@" $config_file  #"s@$VARIABLE@$Variable@" file
 	echo "Setting Exhaustfan RPM to $high_rpm";
-	
 	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);
-	current_rpm2=$current_rpm
 	echo "New Exhaustfan RPM is $current_rpm";
-	
 	fan_pid=$(ps ax | grep macfanctld | cut -d"?" -f 1 | head -1);
-	sudo kill -SIGHUP $fan_pid;
-	;;
-	
-esac
+	sudo kill -SIGHUP $fan_pid;;
+	set)
+	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);
+	if [[ ! "$2" < "$input" || "$2" == "$input" ]]
+	then echo "RPM Value has to be 0 - 6500" && set $2 '6500';
+	fi
+	sed -i "s@$current_rpm@$2@" $config_file
+	echo "Setting Exhaustfan RPM to $2";
+	current_rpm=$(cat $config_file | egrep ^fan_min | cut -d" " -f 2);
+	echo "New Exhaustfan RPM is $current_rpm";
+	fan_pid=$(ps ax | grep macfanctld | cut -d"?" -f 1 | head -1);
+	sudo kill -SIGHUP $fan_pid;;
+	esac
